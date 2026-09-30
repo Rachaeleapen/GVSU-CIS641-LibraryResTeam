@@ -22,7 +22,9 @@ We are going to use streamlit for the web interface. Python logic for resevation
 
 (What is your estimated "plan of attack" for developing this project)
 
-As of the notes from our last team meeting, we are planning to split up the project work between the three of us and our expertise.  I am personall comfortable with databases and I am willing to implement that portion.  We will be sure to split up the work more between us if it ends up being an unfair amount of work for one person. And we will track our work by the contributions on github.  
+As of the notes from our last team meeting, we are planning to split up the project work between the three of us and our expertise.  I am personally comfortable with databases and I am willing to implement that portion.  We will be sure to split up the work more between us if it ends up being an unfair amount of work for one person. And we will track our work by the contributions on github.  
+
+I think we plan to section out our work into sprints and then divide tasks among the three of us.  
 
 # Estimated Timeline
 
