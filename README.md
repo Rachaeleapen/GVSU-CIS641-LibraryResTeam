@@ -1,13 +1,14 @@
 # Library Res Team
 
-Project description (~1 paragraph)
+Project description (\~1 paragraph)
 
 ## Team Members and Roles
 
 * [Rachael Eapen](https://github.com/Rachaeleapen/CIS641-HW2-Eapen) (Role 1, Role 2)
-* Member 2 (Role 3, Role 4)
+* [Amith Kumar Das Orko](https://github.com/amitorko/CIS641-HW2-Orko.git) (Role 3, Role 4)
 * Member 3 (Role 5, Role 6)
 
 ## Prerequisites
 
 ## Run Instructions
+
