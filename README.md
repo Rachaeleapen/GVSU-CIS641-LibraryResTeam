@@ -1,4 +1,4 @@
-# Team Name
+# Library Res Team
 
 Project description (~1 paragraph)
 
