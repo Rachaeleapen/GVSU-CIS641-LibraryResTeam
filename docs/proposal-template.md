@@ -30,7 +30,7 @@ Git and GitHub will be used for version control and to track each team member’
 
 (What is your estimated "plan of attack" for developing this project)
 
-As of the notes from our last team meeting, we are planning to split up the project work between the three of us and our expertise.  I am personally comfortable with databases and I am willing to implement that portion.  We will be sure to split up the work more between us if it ends up being an unfair amount of work for one person. And we will track our work by the contributions on GitHub.
+As of the notes from our last team meeting, we are planning to split up the project work between the three of us and our expertise.  Rachael is personally comfortable with databases and is willing to implement that portion.  We will be sure to split up the work more between us if it ends up being an unfair amount of work for one person. And we will track our work by the contributions on GitHub.
 
 Amith will focus mainly on the Python logic and back-end implementation. This will include reservation rules, checking room availability, creating and canceling reservations, validating user input, and connecting the application logic to the database.
 
