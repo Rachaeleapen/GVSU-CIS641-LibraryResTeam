@@ -1,0 +1,36 @@
+Team name: Library Res Team
+
+Members present: Rachael Eapen, Lilly Jackson, Amith Kumar Das Orko
+
+Date: 10/16/2026
+
+Time: 1:00PM - 1:30PM
+
+Discussion points: 
+* Discuss midterm and midterm presentation
+* We want to all be on zoom for the presentation 
+* We need slides for the presentation
+
+Midterm rubric:
+Presentations will take place on October 28th.
+
+Each team will present for a maximum of 10 minutes. I would like each team member to speak during the presentation, so please ensure each person knows what they will be talking about. This is intended to be an informal status update (i.e., it doesn't have to be perfect, but you need to hit the key points).
+
+Talking points:
+* Introduce each team member
+* Describe your project at a high level. We should all know what each other is doing at this point, but it helps to "set the stage" for your presentation.
+* Present any diagrams you created (Use case, class diagram, etc.)
+
+What I’ll be grading:
+* Each team member talks
+* You hit the key points above
+* That your teams have checked in the slides to your repo (docs folder)
+
+This is a group assignment - your deliverables for this are your slides (though your talk will be graded as part of it). 
+Additionally, you need to check your exported slides (export to PDF) to your team GitHub repository under the 'docs' folder.
+Submit your slides to this assignment and push them to GitHub as mentioned above.
+
+
+Goals for next week (include responsibilities):
+* Lilly: Create log in/registration (needed for reserving and for getting into reservation)
+* Orko: work on UI and database
