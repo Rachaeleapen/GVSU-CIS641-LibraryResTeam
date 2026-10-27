@@ -192,6 +192,7 @@ JOIN rooms r ON r.room_name = 'Study Room B'
 JOIN time_slots t ON t.start_time = '10:00'
 WHERE u.email = 'jordan@example.edu';
 
-SELECT table_name
-FROM information_schema.tables
-WHERE table_schema = 'public';
+SELECT reservation_id, user_id, room_id,
+       reservation_date, status, cancelled_at
+FROM reservations
+ORDER BY reservation_id DESC;
