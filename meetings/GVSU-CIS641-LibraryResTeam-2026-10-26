@@ -1,0 +1,27 @@
+Team Name: Library Res Team  
+Members Present: Rachael Eapen, Lilly Jackson, Amith Kumar Das Orko  
+Date: 10/26/2026  
+Time: 6 pm - 6:30 pm
+
+ Discussion Points
+
+- Reviewed each team member's progress.
+- Discussed the upcoming midterm presentation and demo.
+- Assigned presentation slides and remaining development tasks.
+
+ Progress Updates
+
+- Rachael: Completed the ER diagram and database tables. Created the PostgreSQL database schema (`library_reservation.sql`).
+- Lilly: Worked on the midterm presentation slides and created the frontend files.
+- Orko: Developed Python functions for creating and cancelling reservations and connecting with the database.
+
+ Goals and Next Steps
+
+- Lilly: Complete slides 1–3 and upload frontend files to GitHub.
+- Rachael: Complete slides 4–7 and work on querying the PostgreSQL database.
+- Orko: Complete slides 8–12, prepare a demo video, and test the system to ensure duplicate reservations are prevented.
+- All: Review the presentation, integrate project components, and prepare for the demonstration.
+
+ Overall Progress
+
+The team feels confident about its progress. Significant work has been completed on the database, frontend, and reservation logic. We are on track to prepare a functional demo for the upcoming presentation.
