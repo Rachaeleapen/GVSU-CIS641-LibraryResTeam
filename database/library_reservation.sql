@@ -192,7 +192,5 @@ JOIN rooms r ON r.room_name = 'Study Room B'
 JOIN time_slots t ON t.start_time = '10:00'
 WHERE u.email = 'jordan@example.edu';
 
-SELECT reservation_id, user_id, room_id,
-       reservation_date, status, cancelled_at
-FROM reservations
-ORDER BY reservation_id DESC;
+ALTER TABLE reservations
+ADD COLUMN IF NOT EXISTS cancelled_at TIMESTAMPTZ;

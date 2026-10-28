@@ -52,3 +52,4 @@ def cancel_reservation(reservation_id, user_id):
 
     except Exception as e:
         return f"Cancellation failed: {e}"
+
