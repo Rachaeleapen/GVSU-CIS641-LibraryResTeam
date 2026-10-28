@@ -194,3 +194,30 @@ WHERE u.email = 'jordan@example.edu';
 
 ALTER TABLE reservations
 ADD COLUMN IF NOT EXISTS cancelled_at TIMESTAMPTZ;
+ALTER TABLE reservations
+DROP CONSTRAINT IF EXISTS reservations_check;
+
+ALTER TABLE reservations
+ADD CONSTRAINT reservations_check
+CHECK (
+    (status = 'confirmed' AND cancelled_at IS NULL)
+    OR
+    (status = 'cancelled' AND cancelled_at IS NOT NULL)
+);
+
+SELECT reservation_id,
+       user_id,
+       room_id,
+       reservation_date,
+       status,
+       cancelled_at
+FROM reservations;
+
+TRUNCATE TABLE reservations RESTART IDENTITY;
+SELECT * FROM reservations;
+
+SELECT reservation_id, user_id, room_id,
+       slot_id, reservation_date, status,
+       created_at
+FROM reservations
+ORDER BY reservation_id;
