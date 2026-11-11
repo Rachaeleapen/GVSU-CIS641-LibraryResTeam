@@ -1,4 +1,4 @@
 Placeholder for website
 
 to run this part, you have to install Streamlit using this code in your terminal:
-pip install streamlit psycopg
+.\.venv\Scripts\python.exe -m pip install streamlit psycopg
