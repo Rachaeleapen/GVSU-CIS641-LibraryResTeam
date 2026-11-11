@@ -221,3 +221,21 @@ SELECT reservation_id, user_id, room_id,
        created_at
 FROM reservations
 ORDER BY reservation_id;
+
+SELECT r.room_id, r.room_name, r.capacity
+FROM rooms r
+WHERE r.is_active = TRUE
+AND NOT EXISTS (
+    SELECT 1
+    FROM reservations res
+    WHERE res.room_id = r.room_id
+      AND res.reservation_date = '2026-11-12'
+      AND res.slot_id = 1
+      AND res.status = 'confirmed'
+);
+
+TRUNCATE TABLE reservations RESTART IDENTITY;
+SELECT * FROM users;
+SELECT * FROM rooms;
+SELECT * FROM time_slots;
+SELECT * FROM reservations;
