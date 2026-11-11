@@ -1,6 +1,6 @@
-Instructions for running
+Instructions for running the website
 
-to run the website:
+
 
 (install)
 
@@ -9,6 +9,7 @@ to run the website:
 .\\.venv\Scripts\pip.exe install psycopg-binary
 
 
-(run website)
+
+(run)
 
 .\\.venv\Scripts\streamlit.exe run website/app.py
