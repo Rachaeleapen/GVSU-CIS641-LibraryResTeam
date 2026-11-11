@@ -1,4 +1,15 @@
-Placeholder for website
+Instructions for running the website
 
-to run this part, you have to install Streamlit using this code in your terminal:
-pip install streamlit psycopg
+
+
+(install)
+
+.\\.venv\Scripts\python.exe -m pip install streamlit psycopg
+
+.\\.venv\Scripts\pip.exe install psycopg-binary
+
+
+
+(run)
+
+.\\.venv\Scripts\streamlit.exe run website/app.py

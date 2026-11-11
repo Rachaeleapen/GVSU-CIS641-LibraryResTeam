@@ -135,3 +135,20 @@ def cancel_reservation(reservation_id, user_id):
     except Exception as e:
         return f"Cancellation failed: {e}"
 
+
+def get_all_reservations():
+    try:
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT r.reservation_id, rm.room_name, 
+                           t.start_time, t.end_time, 
+                           r.reservation_date, r.status
+                    FROM reservations r
+                    JOIN rooms rm ON r.room_id = rm.room_id
+                    JOIN time_slots t ON r.slot_id = t.slot_id
+                    ORDER BY r.reservation_date, t.start_time;
+                """)
+                return cur.fetchall()
+    except Exception as e:
+        return []
