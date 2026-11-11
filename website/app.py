@@ -11,7 +11,7 @@ if parent_dir not in sys.path:
 # Include get_all_reservations
 from room_service import get_rooms, get_time_slots, reserve_room, cancel_reservation, get_all_reservations
 
-st.set_page_config(page_title="Library Rooms", page_icon="📚", layout="wide")
+st.set_page_config(page_title="Library Rooms", page_icon="", layout="wide")
 
 st.title("Library Room Reservation System")
 st.markdown("Reserve a quiet space for individual study or group collaboration.")
