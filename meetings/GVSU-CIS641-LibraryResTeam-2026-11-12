@@ -1,13 +1,22 @@
-Progress update
-Lilly - uploaded the website stuff for streamlit; updated readme with instructions on how to run it; added a folder called streamlit into the website folder (it is currently the default GVSU colors)
-Orko - tested the double booking feature, worked on a built in time slot schema
-Rachael - worked on updating the database documentation, and other artifacts
+Team name:  Library Res Team
 
+Members present: Rachael Eapen, Lilly Jackson, Amith Kumar Das Orko
 
+Date: 11/12/2026
 
-Lilly gave a live demo of the webapp and its current functionality.  Talked about deadlines and what needs to be done between now and then.  The current deadline for the project is the 25th.  
+Time: 2:15PM - 2:45PM
 
-To do 
-Rachael: Work on Login page that connects to google account.  Oauth API.  Try to automate the user id to their name
-Lilly: working on formatting, and cleaning up the site.  Working on the reservation functionality
-Orko: validate before booking and make sure the available rooms show up after booking.  
+Discussion points: 
+
+* Progress update
+* Lilly - uploaded the website stuff for streamlit; updated readme with instructions on how to run it; added a folder called streamlit into the website folder (it is currently the default GVSU colors)
+* Orko - tested the double booking feature, worked on a built in time slot schema
+* Rachael - worked on updating the database documentation, and other artifacts
+* Lilly gave a live demo of the webapp and its current functionality.  
+* Talked about deadlines and what needs to be done between now and then. The current deadline for the project is the 25th.  
+
+Goals for next week (include responsibilities)
+
+* Rachael: Work on Login page that connects to google account.  Oauth API.  Try to automate the user id to their name
+* Lilly: working on formatting, and cleaning up the site.  Working on the reservation functionality
+* Orko: validate before booking and make sure the available rooms show up after booking. 
