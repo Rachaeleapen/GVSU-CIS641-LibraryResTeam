@@ -115,3 +115,21 @@ def get_all_reservations():
                 return cur.fetchall()
     except Exception as e:
         return []
+
+def get_available_time_slots(room_id, date):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT slot_id, start_time, end_time
+                FROM time_slots
+                WHERE slot_id NOT IN (
+                    SELECT slot_id
+                    FROM reservations
+                    WHERE room_id = %s
+                    AND reservation_date = %s
+                    AND status = 'confirmed'
+                )
+                ORDER BY start_time
+            """, (room_id, date))
+
+            return cur.fetchall()

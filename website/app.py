@@ -9,7 +9,7 @@ if parent_dir not in sys.path:
     sys.path.append(parent_dir)
 
 # Include get_all_reservations
-from room_service import get_rooms, get_time_slots, reserve_room, cancel_reservation, get_all_reservations
+from room_service import get_rooms, get_time_slots, reserve_room, cancel_reservation, get_all_reservations , get_available_time_slots
 
 st.set_page_config(page_title="Library Rooms", page_icon="", layout="wide")
 
