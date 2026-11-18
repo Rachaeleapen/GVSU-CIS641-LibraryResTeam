@@ -100,7 +100,7 @@ def reserve_room(user_id, room_id, slot_id, booking_date):
                     RETURNING reservation_id
                 """, (user_id, room_id, slot_id, booking_date))
 
-        reservation_id = cur.fetchone()[0]
+                reservation_id = cur.fetchone()[0]
 
         return f"Reservation successful! ID: {reservation_id}"
 
