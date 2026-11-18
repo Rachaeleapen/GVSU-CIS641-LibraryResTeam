@@ -39,8 +39,15 @@ with tab1:
             reservation_date = st.date_input("Select Date", min_value=datetime.date.today())
             
         with col2:
-            room_options = {name: room_id for room_id, name in rooms}
-            selected_room_name = st.selectbox("Select a Room", options=list(room_options.keys()))
+            room_options = {
+            f"{name} (Capacity: {capacity})": room_id
+            for room_id, name, capacity in rooms
+            }
+
+            selected_room_name = st.selectbox(
+            "Select a Room",
+            options=list(room_options.keys())
+            )
             
             slot_options = {f"{start.strftime('%I:%M %p')} - {end.strftime('%I:%M %p')}": slot_id 
                             for slot_id, start, end in time_slots}
