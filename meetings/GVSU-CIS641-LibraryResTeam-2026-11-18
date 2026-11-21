@@ -1,0 +1,21 @@
+Team name:  Library Res Team
+
+Members present: Rachael Eapen, Lilly Jackson, Amith Kumar Das Orko
+
+Date: 11/18/2026
+
+Time: 2:15PM - 2:45PM
+
+Discussion points: 
+
+* Progress update
+* Lily: Worked on adding pictures/making the site smoother and prettier. 
+* Orko - added the code for double bookings and room availability, but not on the app.py website code. 
+* Rachael - worked on updating getting the site run locally, fixed anything broken on the site that she saw when she was running it. 
+* Taled about homework that needed to be completed. The current deadline for the project is by the end of thanksgiving break. Then when we come back we can work on the final deliverables.
+
+Goals for next week (include responsibilities)
+
+* Rachael: Still is working on the Login page that connects to google account.  Oauth API.  Try to automate the user id to their name.  Will also be making sure the sie has all the functionalities we wanted initially.
+* Lilly: Still working on formatting, cleaning up the site, and adding pictures. Working on finalizing her parts of the site.   
+* Orko: working on fixing some code for the cancellation and finalizing his parts of the site.
