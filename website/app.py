@@ -2,6 +2,7 @@ import streamlit as st
 import sys
 import os
 import datetime
+import calendar as month_calendar
 
 # Point Python to the parent folder for backend files
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -22,30 +23,159 @@ from room_service import (
 
 
 st.set_page_config(page_title="Library Rooms", page_icon="", layout="wide")
+
+
 # -------------------------------------------------
 # GOOGLE AUTHENTICATION
 # -------------------------------------------------
 
 if not st.user.is_logged_in:
 
-    st.title("Library Room Reservation System")
-    st.write("Sign in with your Google account to continue.")
+    # Login page styling
+    st.markdown("""
+        <style>
+        .stApp {
+            background: linear-gradient(
+                135deg,
+                #0032A0 0%,
+                #001f66 100%
+            );
+        }
 
-    st.button(
-        "Continue with Google",
-        on_click=st.login,
-        use_container_width=True
-    )
+        [data-testid="stHeader"] {
+            background: transparent;
+        }
+
+        [data-testid="stMainBlockContainer"] {
+            max-width: 100%;
+            padding-top: 5rem;
+        }
+
+        [data-testid="stVerticalBlockBorderWrapper"] {
+            background-color: #ffffff !important;
+            border: 1px solid #ffffff !important;
+            border-radius: 18px;
+            padding: 2rem;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        /* White login card */
+.st-key-login_card {
+    background-color: #ffffff !important;
+    border: 1px solid #ffffff !important;
+    border-radius: 20px !important;
+    padding: 2rem !important;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+}
+
+/* Keep the inside of the card white */
+.st-key-login_card [data-testid="stVerticalBlock"] {
+    background-color: #ffffff !important;
+}
+
+/* Card text */
+.st-key-login_card .login-heading {
+    color: #0032A0 !important;
+}
+
+.st-key-login_card .login-subtitle {
+    color: #52606d !important;
+}
+
+.st-key-login_card .login-label {
+    color: #0032A0 !important;
+}
+
+        .login-heading {
+            color: #0032A0;
+            font-size: 2rem;
+            font-weight: 750;
+            text-align: center;
+            line-height: 1.2;
+            margin-bottom: 0.75rem;
+        }
+
+        .login-subtitle {
+            color: #52606d;
+            text-align: center;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .login-label {
+            color: #0032A0;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+        }
+
+        div.stButton > button {
+            background-color: #0032A0;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            min-height: 3rem;
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+        }
+
+        div.stButton > button:hover {
+            background-color: #002477;
+            color: white;
+            border: none;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # Center the login card
+    left, center, right = st.columns([1, 1.4, 1])
+
+    with center:
+        with st.container(border=True, key="login_card"):
+
+            st.markdown(
+                '<div class="login-label">GVSU LIBRARY</div>',
+                unsafe_allow_html=True
+            )
+
+            st.markdown(
+                '<div class="login-heading">'
+                'Find your space.<br>Focus on what matters.'
+                '</div>',
+                unsafe_allow_html=True
+            )
+
+            st.markdown(
+                '<div class="login-subtitle">'
+                'Sign in to reserve your library study space.'
+                '</div>',
+                unsafe_allow_html=True
+            )
+
+            st.button(
+                "Continue with Google",
+                on_click=st.login,
+                use_container_width=True
+            )
 
     st.stop()
 
 
+
+# -------------------------------------------------
+# GET LOGGED-IN GOOGLE USER
+# -------------------------------------------------
+
 google_user = st.user
 
+# Make sure the Google account email is verified.
 if not getattr(google_user, "email_verified", False):
     st.error("Your Google account email must be verified.")
     st.stop()
 
+# Create or retrieve the user in PostgreSQL.
 try:
     current_user = get_or_create_google_user(
         google_sub=google_user.sub,
@@ -79,6 +209,7 @@ st.markdown(
     "Reserve a quiet space for individual study or group collaboration."
 )
 
+
 st.divider()
 
 try:
@@ -88,11 +219,13 @@ except Exception as e:
     st.error(f"Database connection failed: {e}")
     st.stop()
 
-# Added the third tab here
-tab1, tab2, tab3 = st.tabs([
+
+# for the tabs
+tab1, tab2, tab3, tab4 = st.tabs([
     "Book a Room",
     "View Reservations",
-    "Reservation History"
+    "Reservation History",
+    "Calendar"
 ])
 
 
@@ -316,3 +449,135 @@ with tab3:
                         f"Cancelled on: "
                         f"{cancelled_at.strftime('%B %d, %Y at %I:%M %p')}"
                     )
+
+
+# -------------------------------------------------
+# RESERVATION CALENDAR
+# -------------------------------------------------
+
+with tab4:
+    st.subheader("My Reservation Calendar")
+    st.info("View your confirmed room reservations by month.")
+
+    # Initialize the calendar to the current month.
+    today = datetime.date.today()
+
+    if "calendar_year" not in st.session_state:
+        st.session_state.calendar_year = today.year
+        st.session_state.calendar_month = today.month
+
+    # Calendar navigation.
+    nav_col1, nav_col2, nav_col3 = st.columns([1, 3, 1])
+
+    with nav_col1:
+        if st.button("← Previous", use_container_width=True):
+            if st.session_state.calendar_month == 1:
+                st.session_state.calendar_month = 12
+                st.session_state.calendar_year -= 1
+            else:
+                st.session_state.calendar_month -= 1
+
+            st.rerun()
+
+    with nav_col2:
+        month_name = datetime.date(
+            st.session_state.calendar_year,
+            st.session_state.calendar_month,
+            1
+        ).strftime("%B %Y")
+
+        st.markdown(
+            f"<h3 style='text-align: center;'>{month_name}</h3>",
+            unsafe_allow_html=True
+        )
+
+    with nav_col3:
+        if st.button("Next →", use_container_width=True):
+            if st.session_state.calendar_month == 12:
+                st.session_state.calendar_month = 1
+                st.session_state.calendar_year += 1
+            else:
+                st.session_state.calendar_month += 1
+
+            st.rerun()
+
+    # Return to the current month.
+    if st.button("Today"):
+        st.session_state.calendar_year = today.year
+        st.session_state.calendar_month = today.month
+        st.rerun()
+
+    # Retrieve only this user's confirmed reservations.
+    try:
+        calendar_reservations = get_user_reservations(
+            current_user_id,
+            "confirmed"
+        )
+    except Exception as e:
+        st.error(f"Unable to load calendar reservations: {e}")
+        calendar_reservations = []
+
+    # Organize reservations by date.
+    reservations_by_date = {}
+
+    for res_id, room, start, end, booking_date, status, cancelled_at in calendar_reservations:
+        if (
+            booking_date.year == st.session_state.calendar_year
+            and booking_date.month == st.session_state.calendar_month
+        ):
+            reservations_by_date.setdefault(booking_date.day, []).append(
+                (res_id, room, start, end)
+            )
+
+    # Weekday headings.
+    weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday",
+                "Friday", "Saturday", "Sunday"]
+
+    weekday_columns = st.columns(7)
+
+    for column, weekday in zip(weekday_columns, weekdays):
+        with column:
+            st.markdown(f"**{weekday[:3]}**")
+
+    # Generate the monthly calendar.
+    month_weeks = month_calendar.monthcalendar(
+        st.session_state.calendar_year,
+        st.session_state.calendar_month
+    )
+
+    for week in month_weeks:
+        day_columns = st.columns(7)
+
+        for column, day in zip(day_columns, week):
+            with column:
+                with st.container(border=True):
+                    if day == 0:
+                        st.write(" ")
+                    else:
+                        # Highlight today's date.
+                        if (
+                            day == today.day
+                            and st.session_state.calendar_month == today.month
+                            and st.session_state.calendar_year == today.year
+                        ):
+                            st.markdown(f"**:blue[{day} · Today]**")
+                        else:
+                            st.markdown(f"**{day}**")
+
+                        # Display reservations on this date.
+                        day_reservations = reservations_by_date.get(day, [])
+
+                        for res_id, room, start, end in day_reservations:
+                            st.markdown(
+                                f"**{room}**"
+                            )
+
+                            st.caption(
+                                f"{start.strftime('%I:%M %p')} - "
+                                f"{end.strftime('%I:%M %p')}"
+                            )
+
+                            st.caption(f"ID: {res_id}")
+
+    if not calendar_reservations:
+        st.write("You don't have any confirmed reservations yet.")
