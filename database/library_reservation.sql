@@ -4,22 +4,34 @@
 -- PostgreSQL Database
 -- =====================================================
 
+-- Required for preventing overlapping reservations.
+CREATE EXTENSION IF NOT EXISTS btree_gist;
+
+
+-- =====================================================
 -- 1. USERS TABLE
--- Stores students, staff, and administrators.
+-- =====================================================
 
 CREATE TABLE users (
     user_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL,
+    password_hash TEXT,
+    google_sub TEXT,
     role VARCHAR(20) NOT NULL DEFAULT 'student'
         CHECK (role IN ('student', 'staff', 'admin')),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Each Google account can only be linked to one user.
+CREATE UNIQUE INDEX users_google_sub_unique
+    ON users (google_sub)
+    WHERE google_sub IS NOT NULL;
 
+
+-- =====================================================
 -- 2. ROOMS TABLE
--- Stores information about each reservable room.
+-- =====================================================
 
 CREATE TABLE rooms (
     room_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -31,9 +43,11 @@ CREATE TABLE rooms (
 );
 
 
+-- =====================================================
 -- 3. TIME SLOTS TABLE
--- Stores predefined booking times.
--- Example: 09:00-10:00, 10:00-11:00.
+-- Kept for compatibility with predefined time slots.
+-- New reservations use start_time and end_time directly.
+-- =====================================================
 
 CREATE TABLE time_slots (
     slot_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -41,9 +55,11 @@ CREATE TABLE time_slots (
     end_time TIME NOT NULL,
 
     CHECK (start_time < end_time),
+    CHECK (
+        EXTRACT(EPOCH FROM (end_time - start_time)) IN (3600, 7200, 10800)
+    ),
     UNIQUE (start_time, end_time),
 
-    -- Allows PostgreSQL to detect overlapping time slots.
     slot_period TSRANGE GENERATED ALWAYS AS (
         tsrange(
             DATE '2000-01-01' + start_time,
@@ -56,8 +72,10 @@ CREATE TABLE time_slots (
 );
 
 
+-- =====================================================
 -- 4. RESERVATIONS TABLE
--- Connects users, rooms, dates, and time slots.
+-- Reservations can now last 1, 2, or 3 hours.
+-- =====================================================
 
 CREATE TABLE reservations (
     reservation_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -68,10 +86,15 @@ CREATE TABLE reservations (
     room_id BIGINT NOT NULL
         REFERENCES rooms(room_id) ON DELETE RESTRICT,
 
-    slot_id BIGINT NOT NULL
+    -- Nullable because reservations no longer require a predefined slot.
+    slot_id BIGINT
         REFERENCES time_slots(slot_id) ON DELETE RESTRICT,
 
     reservation_date DATE NOT NULL,
+
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+
     party_size INTEGER NOT NULL DEFAULT 1
         CHECK (party_size > 0),
 
@@ -80,6 +103,14 @@ CREATE TABLE reservations (
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     cancelled_at TIMESTAMPTZ,
+
+    CHECK (start_time < end_time),
+
+    -- Library hours are 9 AM to 5 PM.
+    CHECK (
+        start_time >= TIME '09:00'
+        AND end_time <= TIME '17:00'
+    ),
 
     -- Keep cancellation information consistent.
     CHECK (
@@ -90,18 +121,30 @@ CREATE TABLE reservations (
 );
 
 
--- 5. PREVENT DOUBLE-BOOKING
--- A room can have only one confirmed reservation
--- for a given date and time slot.
+-- =====================================================
+-- 5. PREVENT OVERLAPPING CONFIRMED RESERVATIONS
+-- A room cannot have overlapping confirmed reservations
+-- on the same date.
 -- Cancelled reservations do not block new bookings.
+-- =====================================================
 
-CREATE UNIQUE INDEX one_confirmed_booking_per_room_slot
-    ON reservations (room_id, reservation_date, slot_id)
-    WHERE status = 'confirmed';
+ALTER TABLE reservations
+ADD CONSTRAINT no_overlapping_confirmed_room_reservations
+EXCLUDE USING GIST (
+    room_id WITH =,
+    reservation_date WITH =,
+    tsrange(
+        reservation_date + start_time,
+        reservation_date + end_time,
+        '[)'
+    ) WITH &&
+)
+WHERE (status = 'confirmed');
 
 
+-- =====================================================
 -- 6. INDEXES
--- Help common reservation searches run efficiently.
+-- =====================================================
 
 CREATE INDEX reservations_by_user_date
     ON reservations (user_id, reservation_date);
@@ -115,8 +158,8 @@ CREATE INDEX reservations_by_date_status
 -- =====================================================
 
 -- USERS
--- Placeholder hashes only; these are not real passwords.
--- Generate actual password hashes in your Python app.
+-- Placeholder hashes are not real passwords.
+-- Google users can have a NULL password_hash.
 
 INSERT INTO users (full_name, email, password_hash, role)
 VALUES
@@ -162,16 +205,26 @@ VALUES
 
 
 -- SAMPLE RESERVATIONS
--- The date is tomorrow, so the examples remain useful
--- whenever you initially run this script.
+-- These examples use tomorrow's date.
 
-INSERT INTO reservations
-    (user_id, room_id, slot_id, reservation_date, party_size)
+-- Alex reserves Study Room A from 9 AM to 10 AM.
+
+INSERT INTO reservations (
+    user_id,
+    room_id,
+    slot_id,
+    reservation_date,
+    start_time,
+    end_time,
+    party_size
+)
 SELECT
     u.user_id,
     r.room_id,
     t.slot_id,
     CURRENT_DATE + 1,
+    '09:00',
+    '10:00',
     3
 FROM users u
 JOIN rooms r ON r.room_name = 'Study Room A'
@@ -179,63 +232,31 @@ JOIN time_slots t ON t.start_time = '09:00'
 WHERE u.email = 'alex@example.edu';
 
 
-INSERT INTO reservations
-    (user_id, room_id, slot_id, reservation_date, party_size)
+-- Jordan reserves Study Room B from 10 AM to 11 AM.
+
+INSERT INTO reservations (
+    user_id,
+    room_id,
+    slot_id,
+    reservation_date,
+    start_time,
+    end_time,
+    party_size
+)
 SELECT
     u.user_id,
     r.room_id,
     t.slot_id,
     CURRENT_DATE + 1,
+    '10:00',
+    '11:00',
     5
 FROM users u
 JOIN rooms r ON r.room_name = 'Study Room B'
 JOIN time_slots t ON t.start_time = '10:00'
 WHERE u.email = 'jordan@example.edu';
 
-ALTER TABLE reservations
-ADD COLUMN IF NOT EXISTS cancelled_at TIMESTAMPTZ;
-ALTER TABLE reservations
-DROP CONSTRAINT IF EXISTS reservations_check;
 
-ALTER TABLE reservations
-ADD CONSTRAINT reservations_check
-CHECK (
-    (status = 'confirmed' AND cancelled_at IS NULL)
-    OR
-    (status = 'cancelled' AND cancelled_at IS NOT NULL)
-);
-
-SELECT reservation_id,
-       user_id,
-       room_id,
-       reservation_date,
-       status,
-       cancelled_at
-FROM reservations;
-
-TRUNCATE TABLE reservations RESTART IDENTITY;
-SELECT * FROM reservations;
-
-SELECT reservation_id, user_id, room_id,
-       slot_id, reservation_date, status,
-       created_at
-FROM reservations
-ORDER BY reservation_id;
-
-SELECT r.room_id, r.room_name, r.capacity
-FROM rooms r
-WHERE r.is_active = TRUE
-AND NOT EXISTS (
-    SELECT 1
-    FROM reservations res
-    WHERE res.room_id = r.room_id
-      AND res.reservation_date = '2026-11-12'
-      AND res.slot_id = 1
-      AND res.status = 'confirmed'
-);
-
-TRUNCATE TABLE reservations RESTART IDENTITY;
-SELECT * FROM users;
-SELECT * FROM rooms;
-SELECT * FROM time_slots;
-SELECT * FROM reservations;
+-- =====================================================
+-- END OF DATABASE SETUP
+-- =====================================================

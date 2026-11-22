@@ -1,0 +1,16 @@
+# Python virtual environments
+.venv/
+venv/
+
+# Python generated files
+__pycache__/
+*.py[cod]
+
+# Streamlit secrets
+.streamlit/secrets.toml
+
+# Environment variables and local secrets
+.env
+.env.*
+
+google_login_test.py
